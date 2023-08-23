@@ -14,6 +14,7 @@ import {
 import "./index.css";
 import Cart from './features/cart/Cart';
 import CartPage from './pages/CartPage';
+import Checkout from './pages/Checkout';
 
 const router = createBrowserRouter([
   {
@@ -28,9 +29,13 @@ const router = createBrowserRouter([
     path: "/signup",
     element: (<SignupPage></SignupPage>),
   },
-  { // only for testing
+  { 
     path: "/cart",
     element: (<CartPage></CartPage>),
+  },
+  { 
+    path: "/checkout",
+    element: (<Checkout></Checkout>),
   },
 ]);
 
