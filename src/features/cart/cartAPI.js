@@ -58,3 +58,19 @@ export function deleteItemFromCart(itemId) {
 }
   );
 }
+
+export  function resetcart(userId) {
+  // get all the items and delete items api both are using
+  return new Promise(async(resolve)=>{
+
+    const response = await fetchItemsByUserId(userId)
+    const items = response.data;
+    for(let item of items){
+     await deleteItemFromCart((item.id))
+    }
+    resolve({status:'success'})
+  })
+  
+  
+}
+

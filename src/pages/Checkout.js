@@ -7,14 +7,17 @@ import {
   updateCartAsync,
 } from "../features/cart/cartSlice";
 import { useForm } from "react-hook-form";
-import { selectLoggedInUser, updateUserAsync } from "../features/auth/authSlice";
-import { createOrderAsync } from "../features/order/orderSlice";
-
+import {
+  selectLoggedInUser,
+  updateUserAsync,
+} from "../features/auth/authSlice";
+import { createOrderAsync , selectCurrentOrder  } from "../features/order/orderSlice";
 
 export default function Checkout() {
   const dispatch = useDispatch();
-  const user = useSelector(selectLoggedInUser)
+  const user = useSelector(selectLoggedInUser);
   const items = useSelector(selectItems);
+  const currentOrder = useSelector(selectCurrentOrder)
   const totalAmount = items.reduce(
     (amount, item) => item.price * item.quantity + amount,
     0
@@ -22,8 +25,8 @@ export default function Checkout() {
   const totalItems = items.reduce((total, item) => item.quantity + total, 0);
   console.log(items, "This shows the items in cart");
 
-  const [selectedAddress,setSlectedAddress] = useState(null)
-  const [paymentMethod,setPaymentMethad] = useState('cash')
+  const [selectedAddress, setSlectedAddress] = useState(null);
+  const [paymentMethod, setPaymentMethad] = useState("cash");
 
   const {
     register,
@@ -33,8 +36,7 @@ export default function Checkout() {
     formState: { errors },
   } = useForm();
 
-  
-  console.log(user , 'THIS IS USER')
+  console.log(user, "THIS IS USER");
 
   const handleQuantity = (e, item) => {
     dispatch(updateCartAsync({ ...item, quantity: +e.target.value }));
@@ -44,25 +46,34 @@ export default function Checkout() {
     dispatch(deleteItemFromCartAsync(id));
   };
 
-  const handleAddress = (e)=>{
-    console.log(e.target.value)
-    setSlectedAddress(user.addresses[e.target.value])
-  }
-  const handlePayment = (e) =>{
-    console.log(e.target.value)
-    setPaymentMethad(e.target.value)
-  }
+  const handleAddress = (e) => {
+    console.log(e.target.value);
+    setSlectedAddress(user.addresses[e.target.value]);
+  };
+  const handlePayment = (e) => {
+    console.log(e.target.value);
+    setPaymentMethad(e.target.value);
+  };
 
-  const handleOrder = ()=>{
-    const order = {items,totalAmount,totalItems,user,paymentMethod,selectedAddress}
-    dispatch(createOrderAsync(order))
+  const handleOrder = () => {
+    const order = {
+      items,
+      totalAmount,
+      totalItems,
+      user,
+      paymentMethod,
+      selectedAddress,
+      status : 'pending'
+    };
+    dispatch(createOrderAsync(order));
     // todo : redirect to succsess page
     // todo : clear the cart
     // todo : stock should change
-  }
+  };
   return (
     <>
       {!items.length && <Navigate to="/" replace={true}></Navigate>}
+      {currentOrder && <Navigate to={`/order-success/${currentOrder.id}`} replace={true}></Navigate>}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
           <div className="lg:col-span-3">
@@ -70,14 +81,16 @@ export default function Checkout() {
               className="bg-white px-5 py-12 mt-12"
               noValidate
               onSubmit={handleSubmit((data) => {
-                console.log(data)
+                console.log(data);
                 dispatch(
-                 updateUserAsync({...user , addresses:[...user.addresses,data]})
+                  updateUserAsync({
+                    ...user,
+                    addresses: [...user.addresses, data],
+                  })
                 );
-                reset()
+                reset();
                 console.log(data);
               })}
-              
             >
               <div className="space-y-12">
                 <div className="border-b border-gray-900/10 pb-12">
@@ -135,7 +148,7 @@ export default function Checkout() {
                         Phone
                       </label>
                       <div className="mt-2">
-                      <input
+                        <input
                           type="tel"
                           {...register("phone", {
                             required: "phone is required",
@@ -246,7 +259,7 @@ export default function Checkout() {
                     Choose from Existing Address
                   </p>
                   <ul role="list">
-                    {user.addresses.map((address,index) => (
+                    {user.addresses.map((address, index) => (
                       <li
                         key={index}
                         className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200"
@@ -300,9 +313,9 @@ export default function Checkout() {
                             id="cash"
                             name="payments"
                             onChange={handlePayment}
-                            value='cash'
+                            value="cash"
                             type="radio"
-                            checked = {paymentMethod === 'cash'}
+                            checked={paymentMethod === "cash"}
                             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           />
                           <label
@@ -317,9 +330,9 @@ export default function Checkout() {
                             id="card"
                             name="payments"
                             onChange={handlePayment}
-                            value='card'
+                            value="card"
                             type="radio"
-                            checked = {paymentMethod === 'card'}
+                            checked={paymentMethod === "card"}
                             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           />
                           <label
@@ -430,7 +443,6 @@ export default function Checkout() {
                       <button
                         type="button"
                         className="font-medium text-indigo-600 hover:text-indigo-500"
-                       
                       >
                         Continue Shopping
                         <span aria-hidden="true"> &rarr;</span>
