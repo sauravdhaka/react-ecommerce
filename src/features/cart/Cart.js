@@ -1,32 +1,40 @@
 import React, { useState, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteItemFromCartAsync, increment, incrementAsync, selectCount, selectItems, updateCartAsync } from "./cartSlice";
+import {
+  deleteItemFromCartAsync,
+  increment,
+  incrementAsync,
+  selectCount,
+  selectItems,
+  updateCartAsync,
+} from "./cartSlice";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { updateCart } from "./cartAPI";
 
-
-
 export default function Cart() {
-  
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
-  const items = useSelector(selectItems)
-  const totalAmount = items.reduce((amount,item) => item.price*item.quantity + amount,0)
-  const totalItems = items.reduce((total,item) => item.quantity + total,0)
-  console.log(items,"This shows the items in cart")
+  const items = useSelector(selectItems);
+  const totalAmount = items.reduce(
+    (amount, item) => item.price * item.quantity + amount,
+    0
+  );
+  const totalItems = items.reduce((total, item) => item.quantity + total, 0);
+  console.log(items, "This shows the items in cart");
 
-  const handleQuantity = (e,item) =>{
-      dispatch(updateCartAsync({...item,quantity:+e.target.value}))
-  }
+  const handleQuantity = (e, item) => {
+    dispatch(updateCartAsync({ ...item, quantity: +e.target.value }));
+  };
 
-  const handleRemove = (e,id)=>{
-    dispatch(deleteItemFromCartAsync(id))
-  }
+  const handleRemove = (e, id) => {
+    dispatch(deleteItemFromCartAsync(id));
+  };
 
   return (
     <>
+      {!items.length && <Navigate to='/' replace={true}></Navigate>}
       <div className="mx-auto mt-12 bg-white max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900">
@@ -52,9 +60,7 @@ export default function Cart() {
                         </h3>
                         <p className="ml-4">{item.price}</p>
                       </div>
-                      <p className="mt-1 text-sm text-gray-500">
-                        {item.brand}
-                      </p>
+                      <p className="mt-1 text-sm text-gray-500">{item.brand}</p>
                     </div>
                     <div className="flex flex-1 items-end justify-between text-sm">
                       <div className="text-gray-500">
@@ -64,7 +70,10 @@ export default function Cart() {
                         >
                           Qty
                         </label>
-                        <select onChange={(e)=>handleQuantity(e,item)} value={item.quantity}>
+                        <select
+                          onChange={(e) => handleQuantity(e, item)}
+                          value={item.quantity}
+                        >
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -75,7 +84,7 @@ export default function Cart() {
 
                       <div className="flex">
                         <button
-                        onClick={e => handleRemove(e,item.id)}
+                          onClick={(e) => handleRemove(e, item.id)}
                           type="button"
                           className="font-medium text-indigo-600 hover:text-indigo-500"
                         >
@@ -103,8 +112,8 @@ export default function Cart() {
             Shipping and taxes calculated at checkout.
           </p>
           <div className="mt-6">
-          <Link
-              to='/checkout'
+            <Link
+              to="/checkout"
               className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
             >
               Checkout
@@ -113,15 +122,15 @@ export default function Cart() {
           <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
             <p>
               or
-              <Link to='/'>
-              <button
-                type="button"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-                onClick={() => setOpen(false)}
-              >
-                Continue Shopping
-                <span aria-hidden="true"> &rarr;</span>
-              </button>
+              <Link to="/">
+                <button
+                  type="button"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                  onClick={() => setOpen(false)}
+                >
+                  Continue Shopping
+                  <span aria-hidden="true"> &rarr;</span>
+                </button>
               </Link>
             </p>
           </div>
