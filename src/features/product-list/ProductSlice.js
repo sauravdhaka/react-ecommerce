@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchAllProducts , fetchProductsByFilters , fetchBrands , fetchCategories, fetchProductById } from './ProductAPI';
+import { fetchAllProducts , fetchProductsByFilters , fetchBrands , fetchCategories, fetchProductById , createProduct , updateProduct } from './ProductAPI';
 
 const initialState = {
   products: [],
@@ -58,14 +58,29 @@ export const fetchCategoriesAsync = createAsyncThunk(
   }
 );
 
+export const createProductAsync = createAsyncThunk(
+  'product/createProduct',
+  async (product) => {
+    const response = await createProduct(product);
+    return response.data;
+  }
+);
+
+export const updateProductAsync = createAsyncThunk(
+  'product/updateProduct',
+  async (product) => {
+    const response = await updateProduct(product);
+    return response.data;
+  }
+);
+
 export const ProductSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    increment: (state) => {
-    
-      state.value += 1;
-    },
+   clearSelectedProduct:(state)=>{
+    state.selectedProduct = null
+   }
    
   },
   
@@ -107,10 +122,25 @@ export const ProductSlice = createSlice({
         state.status = 'idle';
         state.selectedProduct = action.payload;
       })
+      .addCase(createProductAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(createProductAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.products.push(action.payload);
+      })
+      .addCase(updateProductAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateProductAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        const index = state.products.findIndex(product => product.id === action.payload.id)
+        state.products[index] = action.payload
+      })
   },
 });
 
-export const { increment } = ProductSlice.actions;
+export const { clearSelectedProduct } = ProductSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

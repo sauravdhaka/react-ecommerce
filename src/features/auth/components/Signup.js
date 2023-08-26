@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectLoggedInUser , CreateUserAsync  } from "../authSlice";
+import { selectLoggedInUser, CreateUserAsync } from "../authSlice";
 import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 export default function Signup() {
   const dispatch = useDispatch();
-  const user = useSelector(selectLoggedInUser)
+  const user = useSelector(selectLoggedInUser);
   const {
     register,
     handleSubmit,
@@ -15,10 +15,9 @@ export default function Signup() {
   } = useForm();
   console.log(errors);
 
-
   return (
     <>
-    {user && <Navigate to='/' replace={true}></Navigate>}
+      {user && <Navigate to="/" replace={true}></Navigate>}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -36,7 +35,15 @@ export default function Signup() {
             noValidate
             className="space-y-6"
             onSubmit={handleSubmit((data) => {
-              dispatch(CreateUserAsync({email:data.email,password:data.password , addresses:[]}))
+              dispatch(
+                CreateUserAsync({
+                  email: data.email,
+                  password: data.password,
+                  addresses: [],
+                  role : 'user'
+                  // TODO : this role can be directly given on backend
+                })
+              );
               console.log(data);
             })}
           >
@@ -74,7 +81,6 @@ export default function Signup() {
                 >
                   Password
                 </label>
-                
               </div>
               <div className="mt-2">
                 <input
@@ -113,8 +119,8 @@ export default function Signup() {
                   id="confirmPassword"
                   {...register("confirmPassword", {
                     required: "confirm-password is required",
-                    validate: (value, formValues) => value === formValues.password || 'password not matched'
-
+                    validate: (value, formValues) =>
+                      value === formValues.password || "password not matched",
                   })}
                   type="password"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

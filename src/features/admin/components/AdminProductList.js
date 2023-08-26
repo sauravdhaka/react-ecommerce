@@ -9,7 +9,7 @@ import {
   selectBrands,
   selectCategories,
   selectTotalItems,
-} from "../ProductSlice";
+} from "../../product-list/ProductSlice";
 
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { StarIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -31,13 +31,11 @@ const sortOptions = [
   { name: "Price: High to Low", sort: "price", order: "desc", current: false },
 ];
 
-
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ProductList() {
+export default function AdminProductList() {
   const dispatch = useDispatch();
 
   const products = useSelector(selectAllProducts);
@@ -57,7 +55,6 @@ export default function ProductList() {
       options: brands,
     },
   ];
-
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [filter, setFilter] = useState({});
@@ -97,17 +94,16 @@ export default function ProductList() {
   useEffect(() => {
     const pagination = { _page: page, _limit: ITEMS_PER_PAGE };
     dispatch(fetchProductsByFiltersAsync({ filter, sort, pagination }));
-    // TODO :Server will filter deletede products
   }, [dispatch, filter, sort, page]);
 
-  useEffect(()=>{
-    SetPage(1)
-  },[totalItems,sort]) 
+  useEffect(() => {
+    SetPage(1);
+  }, [totalItems, sort]);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchBrandsAsync());
     dispatch(fetchCategoriesAsync());
-  },[])
+  }, []);
 
   return (
     <div>
@@ -200,10 +196,19 @@ export default function ProductList() {
                 </h2>
 
                 <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
-                  <DesktopFilter handleFilter={handleFilter} filters={filters}></DesktopFilter>
+                  <DesktopFilter
+                    handleFilter={handleFilter}
+                    filters={filters}
+                  ></DesktopFilter>
+
 
                   {/* Product grid */}
                   <div className="lg:col-span-3">
+                  <div>
+                  <Link to='/admin/product-form' className="rounded-md mx-10 my-5 bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Add New Product
+                  </Link>
+                </div>
                     <ProductGrid products={products}></ProductGrid>
                   </div>
                   {/* product grid end */}
@@ -229,7 +234,7 @@ function MobileFilter({
   mobileFiltersOpen,
   setMobileFiltersOpen,
   handleFilter,
-  filters
+  filters,
 }) {
   return (
     <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -346,7 +351,7 @@ function MobileFilter({
   );
 }
 
-function DesktopFilter({ handleFilter , filters }) {
+function DesktopFilter({ handleFilter, filters }) {
   return (
     <form className="hidden lg:block">
       {filters.map((section) => (
@@ -403,18 +408,18 @@ function DesktopFilter({ handleFilter , filters }) {
 }
 
 function Pagination({ page, SetPage, handlePage, totalItems }) {
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) 
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   return (
     <div className="flex cursor-pointer items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
       <div className="flex flex-1 justify-between sm:hidden">
         <div
-          onClick={e=> handlePage(page > 1 ? page -1 : page)}
+          onClick={(e) => handlePage(page > 1 ? page - 1 : page)}
           className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Previous
         </div>
         <div
-          onClick={e=> handlePage(page < totalPages ? page + 1 : page)}
+          onClick={(e) => handlePage(page < totalPages ? page + 1 : page)}
           className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Next
@@ -427,8 +432,13 @@ function Pagination({ page, SetPage, handlePage, totalItems }) {
             <span className="font-medium">
               {(page - 1) * ITEMS_PER_PAGE + 1}
             </span>{" "}
-            to <span className="font-medium">{page * ITEMS_PER_PAGE > totalItems ? totalItems : page*ITEMS_PER_PAGE}</span> of{" "}
-            <span className="font-medium">{totalItems}</span> results
+            to{" "}
+            <span className="font-medium">
+              {page * ITEMS_PER_PAGE > totalItems
+                ? totalItems
+                : page * ITEMS_PER_PAGE}
+            </span>{" "}
+            of <span className="font-medium">{totalItems}</span> results
           </p>
         </div>
         <div>
@@ -437,27 +447,29 @@ function Pagination({ page, SetPage, handlePage, totalItems }) {
             aria-label="Pagination"
           >
             <div
-              onClick={e=> handlePage(page > 1 ? page -1 : page)}
+              onClick={(e) => handlePage(page > 1 ? page - 1 : page)}
               className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
               <span className="sr-only">Previous</span>
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
             </div>
             {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
-            {Array.from({ length: totalPages}).map(
-              (el, index) => (
-                <div
-                  onClick={(e) => handlePage(index + 1)}
-                  aria-current="page"
-                  className={`relative cursor-pointer z-10 inline-flex items-center ${index+1 === page ? 'bg-indigo-600 text-white' : 'text-gray-400' } px-4 py-2 text-sm font-semibold  focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
-                >
-                  {index + 1}
-                </div>
-              )
-            )}
+            {Array.from({ length: totalPages }).map((el, index) => (
+              <div
+                onClick={(e) => handlePage(index + 1)}
+                aria-current="page"
+                className={`relative cursor-pointer z-10 inline-flex items-center ${
+                  index + 1 === page
+                    ? "bg-indigo-600 text-white"
+                    : "text-gray-400"
+                } px-4 py-2 text-sm font-semibold  focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+              >
+                {index + 1}
+              </div>
+            ))}
 
             <div
-             onClick={e=> handlePage(page < totalPages ? page+1 : page)}
+              onClick={(e) => handlePage(page < totalPages ? page + 1 : page)}
               className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
               <span className="sr-only">Next</span>
@@ -476,6 +488,7 @@ function ProductGrid({ products }) {
       <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
           {products.map((product) => (
+            <div>
             <Link to={`/productdetail/${product.id}`} key={product.id}>
               <div
                 key={product.id}
@@ -513,11 +526,17 @@ function ProductGrid({ products }) {
                     </p>
                   </div>
                 </div>
-                {product.deleted  && <div>
+               {product.deleted  && <div>
                   <p className="text-sm text-red-400">product deleted</p>
                 </div>}
               </div>
             </Link>
+            <div className="mt-5">
+                  <Link to={`/admin/product-form/edit/${product.id}`} className="rounded-md my-5 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Edit Product
+                  </Link>
+                </div>
+            </div>
           ))}
         </div>
       </div>
