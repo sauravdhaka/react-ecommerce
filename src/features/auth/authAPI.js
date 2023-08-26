@@ -42,4 +42,14 @@ export function checkUser(loginInfo ) {
 }
 
 
+export function signOut(userId) {
+  return new Promise(async (resolve) =>{
+
+    // tod : on serve only important info
+    resolve({data : 'success'})
+}
+  );
+}
+
+
 
