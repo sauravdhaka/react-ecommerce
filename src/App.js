@@ -25,6 +25,10 @@ import PageNotFound from './pages/404';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import UserOrders from './features/user/components/UserOrders';
 import UserOrderPage from './pages/UserOrderPage';
+import UserProfile from './features/user/components/UserProfile'
+import UserProfilePage from './pages/UserProfilePage';
+import { fetchLoggedInUser } from './features/user/UserAPI';
+import { fetchLoggedInUserAsync } from './features/user/UserSlice';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +63,10 @@ const router = createBrowserRouter([
     element: (<UserOrderPage></UserOrderPage>),
   },
   { 
+    path: "/profile",
+    element: (<UserProfilePage></UserProfilePage>),
+  },
+  { 
     path: "*",
     element: (<PageNotFound></PageNotFound>),
   },
@@ -71,6 +79,7 @@ function App() {
     if(user){
 
       dispatch(fetchItemsByUserIdAsync(user.id))
+      dispatch(fetchLoggedInUserAsync(user.id))
     }
   },[dispatch,user])
   return (
