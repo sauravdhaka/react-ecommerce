@@ -7,12 +7,18 @@ import {
   selectTotalOrders,
   updateOrderAsync,
 } from "../../order/orderSlice";
-import { PencilIcon, EyeIcon } from "@heroicons/react/24/outline";
+import {
+  PencilIcon,
+  EyeIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+} from "@heroicons/react/24/outline";
 import { discountedPrice } from "../../../app/constants";
 import Pagination from "../../common/Pagination";
 
 export default function AdminOrders() {
   const [page, SetPage] = useState(1);
+  const [sort, setSort] = useState({});
   const dispatch = useDispatch();
   const orders = useSelector(selectorders);
   const totalOrders = useSelector(selectTotalOrders);
@@ -25,7 +31,6 @@ export default function AdminOrders() {
 
   const handlePage = (page) => {
     SetPage(page);
-    
   };
 
   const handleUpdate = (e, order) => {
@@ -33,12 +38,18 @@ export default function AdminOrders() {
     dispatch(updateOrderAsync(updatedOrder));
     setEditableOrderId(-1);
   };
+  const handleSort = (sortOption) => {
+    const sort = { _sort: sortOption.sort, _order: sortOption.order };
+    console.log({ sort });
+    setSort(sort);
+  };
 
   useEffect(() => {
     const pagination = { _page: page, _limit: ITEMS_PER_PAGE };
-    dispatch(fetchAllOrdersAsync(pagination));
+
+    dispatch(fetchAllOrdersAsync({ sort, pagination }));
     // TODO :Server will filter deletede products
-  }, [dispatch, page]);
+  }, [dispatch, page, sort]);
 
   const chooseColor = (status) => {
     switch (status) {
@@ -64,9 +75,39 @@ export default function AdminOrders() {
             <table className="min-w-max w-full table-auto">
               <thead>
                 <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                  <th className="py-3 px-6 text-left">Orders#</th>
+                  <th
+                    className="py-3 px-6 text-left cursor-pointer"
+                    onClick={(e) =>
+                      handleSort({
+                        sort: "id",
+                        order: sort?._order === "asc" ? "desc" : "asc",
+                      })
+                    }
+                  >
+                    Orders#{" "}
+                    {(sort._sort === "id") && (sort._order === "asc") ? (
+                      <ArrowUpIcon className="w-4 h-4 inline"></ArrowUpIcon>
+                    ) : (
+                      <ArrowDownIcon className="w-4 h-4 inline"></ArrowDownIcon>
+                    )}
+                  </th>
                   <th className="py-3 px-6 text-left">Items</th>
-                  <th className="py-3 px-6 text-center">Total Amount</th>
+                  <th
+                    className="py-3 px-6 text-left cursor-pointer"
+                    onClick={(e) =>
+                      handleSort({
+                        sort: "totalAmount",
+                        order: sort?._order === "asc" ? "desc" : "asc",
+                      })
+                    }
+                  >
+                    TotalAmount{" "}
+                    {(sort._sort === "totalAmount") && (sort._order === "asc") ? (
+                      <ArrowUpIcon className="w-4 h-4 inline"></ArrowUpIcon>
+                    ) : (
+                      <ArrowDownIcon className="w-4 h-4 inline"></ArrowDownIcon>
+                    )}
+                  </th>
                   <th className="py-3 px-6 text-center">Shipping Address</th>
                   <th className="py-3 px-6 text-center">Status</th>
                   <th className="py-3 px-6 text-center">Actions</th>
