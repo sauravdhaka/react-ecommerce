@@ -7,7 +7,7 @@ import {fetchProductByIdAsync, selectProductById} from '../ProductSlice'
 import { fetchProductById } from "../ProductAPI";
 import { useParams } from "react-router-dom";
 import { selectLoggedInUser } from "../../auth/authSlice";
-import { addToCartAsync } from "../../cart/cartSlice";
+import { addToCartAsync, selectItems } from "../../cart/cartSlice";
 import { discountedPrice } from "../../../app/constants";
 
  const colors = [
@@ -47,13 +47,18 @@ export default function ProductDetails() {
     // tod: In server data we will add things
     const dispatch = useDispatch()
     const params = useParams();
+    const items = useSelector(selectItems)
 
 
     const handleCart = (e)=>{
       e.preventDefault();
-      const newItem = {...product,quantity:1,user:user.id}
+      if(items.findIndex(item=>item.productId===product.id) < 0)
+      {const newItem = {...product,quantity:1,user:user.id,productId : product.id}
       delete newItem['id']
-      dispatch(addToCartAsync(newItem))
+      dispatch(addToCartAsync(newItem))}
+      else{
+        console.log('already added')
+      }
     }
 
     useEffect(()=>{
