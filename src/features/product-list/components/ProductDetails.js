@@ -52,9 +52,8 @@ export default function ProductDetails() {
 
     const handleCart = (e)=>{
       e.preventDefault();
-      if(items.findIndex(item=>item.productId===product.id) < 0)
-      {const newItem = {...product,quantity:1,user:user.id,productId : product.id}
-      delete newItem['id']
+      if(items.findIndex(item=>item.product.id===product.id) < 0)
+      {const newItem = {quantity:1,user:user.id,product : product.id}
       dispatch(addToCartAsync(newItem))}
       else{
         console.log('already added')
