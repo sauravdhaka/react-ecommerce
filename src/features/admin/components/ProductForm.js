@@ -102,6 +102,11 @@ export default function ProductForm() {
             Add Product
           </h2>
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          {selectedProduct && selectedProduct.deleted && (
+                <h2 className="text-red-500 sm:col-span-6">
+                  This product is deleted
+                </h2>
+              )}
             <div className="sm:col-span-6">
               <label
                 htmlFor="title"
@@ -249,7 +254,7 @@ export default function ProductForm() {
                     type="number"
                     {...register("stock", {
                       required: "stock is required",
-                      min: 1,
+                      min: 0,
                     })}
                     id="stock"
                     className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
