@@ -4,7 +4,8 @@ import { addToCart , fetchItemsByUserId ,updateCart, deleteItemFromCart ,resetca
 const initialState = {
   value: 0,
   items: [],
-  status : 'idle'
+  status : 'idle',
+  cartLoaded : false
 };
 
 
@@ -81,6 +82,11 @@ export const cartSlice = createSlice({
       .addCase(fetchItemsByUserIdAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.items = action.payload;
+        state.cartLoaded = true
+      })
+      .addCase(fetchItemsByUserIdAsync.rejected, (state, action) => {
+        state.status = 'idle';
+        state.cartLoaded = true
       })
       .addCase(updateCartAsync.pending, (state) => {
         state.status = 'loading';
@@ -114,6 +120,7 @@ export const { increment } = cartSlice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectItems = (state) => state.cart.items;
+export const selectCartLoaded = (state) => state.cart.cartLoaded;
 
 
 
