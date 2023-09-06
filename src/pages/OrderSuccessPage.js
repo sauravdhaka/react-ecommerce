@@ -10,10 +10,10 @@ export default function OrderSuccessPage() {
   const user = useSelector(selectLoggedInUser)
   useEffect(()=>{
     //reset cart
-    dispatch(resetcartAsync(user.id))
+    dispatch(resetcartAsync())
     // reset currentOrder
     dispatch(resetOrder())
-  },[dispatch,user])
+  },[dispatch])
 
   return (
     

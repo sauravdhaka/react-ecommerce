@@ -12,16 +12,15 @@ import { selectLoggedInUser } from "../../auth/authSlice";
 import { discountedPrice } from "../../../app/constants";
 
 export default function UserOrders() {
-  const userInfo = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   const orders = useSelector(selectUserOrders);
   useEffect(() => {
-    dispatch(fetchLoggedInUserOrdersAsync(userInfo.id));
-  }, [dispatch,userInfo]);
+    dispatch(fetchLoggedInUserOrdersAsync());
+  }, [dispatch]);
 
   return (
     <div>
-      {orders.map((order) => (
+      {orders && orders.map((order) => (
         <div>
           <div className="mx-auto mt-12 bg-white max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
