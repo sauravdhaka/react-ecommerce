@@ -7,8 +7,11 @@ import {
   updateCartAsync,
 } from "../features/cart/cartSlice";
 import { useForm } from "react-hook-form";
-import {updateUserAsync} from '../features/user/UserSlice'
-import { createOrderAsync , selectCurrentOrder  } from "../features/order/orderSlice";
+import { updateUserAsync } from "../features/user/UserSlice";
+import {
+  createOrderAsync,
+  selectCurrentOrder,
+} from "../features/order/orderSlice";
 import { selectUserInfo } from "../features/user/UserSlice";
 import { discountedPrice } from "../app/constants";
 
@@ -16,7 +19,7 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const user = useSelector(selectUserInfo);
   const items = useSelector(selectItems);
-  const currentOrder = useSelector(selectCurrentOrder)
+  const currentOrder = useSelector(selectCurrentOrder);
   const totalAmount = items.reduce(
     (amount, item) => discountedPrice(item.product) * item.quantity + amount,
     0
@@ -38,7 +41,7 @@ export default function Checkout() {
   console.log(user, "THIS IS USER");
 
   const handleQuantity = (e, item) => {
-    dispatch(updateCartAsync({ id:item.id, quantity: +e.target.value }));
+    dispatch(updateCartAsync({ id: item.id, quantity: +e.target.value }));
   };
 
   const handleRemove = (e, id) => {
@@ -59,10 +62,10 @@ export default function Checkout() {
       items,
       totalAmount,
       totalItems,
-      user : user.id,
+      user: user.id,
       paymentMethod,
       selectedAddress,
-      status : 'pending'
+      status: "pending",
     };
     dispatch(createOrderAsync(order));
     // todo : redirect to succsess page
@@ -72,7 +75,19 @@ export default function Checkout() {
   return (
     <>
       {!items.length && <Navigate to="/" replace={true}></Navigate>}
-      {currentOrder && <Navigate to={`/order-success/${currentOrder.id}`} replace={true}></Navigate>}
+      {currentOrder && currentOrder.paymentMethod === 'cash' && (
+        <Navigate
+          to={`/order-success/${currentOrder.id}`}
+          replace={true}
+        ></Navigate>
+      )}
+        {currentOrder &&  currentOrder.paymentMethod === 'card' && (
+        <Navigate
+          to={`/stripe-checkout/`}
+          replace={true}
+        ></Navigate>
+      )}
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
           <div className="lg:col-span-3">
@@ -370,9 +385,13 @@ export default function Checkout() {
                           <div>
                             <div className="flex justify-between text-base font-medium text-gray-900">
                               <h3>
-                                <a href={item.product.id}>{item.product.title}</a>
+                                <a href={item.product.id}>
+                                  {item.product.title}
+                                </a>
                               </h3>
-                              <p className="ml-4">{discountedPrice(item.product)}</p>
+                              <p className="ml-4">
+                                {discountedPrice(item.product)}
+                              </p>
                             </div>
                             <p className="mt-1 text-sm text-gray-500">
                               {item.product.brand}
