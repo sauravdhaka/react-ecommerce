@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loginUserAsync, selectError, selectLoggedInUser } from "../authSlice";
+import { loginUserAsync, resetPasswordRequestAsync, selectError, selectLoggedInUser, selectMailSent } from "../authSlice";
 import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 export default function Login() {
   const dispatch = useDispatch();
+  const mailSent = useSelector(selectMailSent)
   
   const {
     register,
@@ -37,6 +38,7 @@ export default function Login() {
             onSubmit={handleSubmit((data) => {
               // todo : implementation on backend with email
               console.log(data);
+              dispatch(resetPasswordRequestAsync(data.email))
             })}
             className="space-y-6"
             
@@ -63,6 +65,9 @@ export default function Login() {
                 />
                 {errors.email && (
                   <p className="text-red-500">{errors.email.message}</p>
+                )}
+                {mailSent && (
+                  <p className="text-green-500">Mail Sent</p>
                 )}
               </div>
             </div>

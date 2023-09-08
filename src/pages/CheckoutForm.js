@@ -60,7 +60,7 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: `https://ecommerce-backend-90s3j2k3w-sauravdhaka.vercel.app/order-success/${currentOrder.id}`,
+        return_url: `https://ecommerce-backend-sauravdhaka.vercel.app/order-success/${currentOrder.id}`,
       },
     });
 
