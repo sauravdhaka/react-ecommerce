@@ -8,7 +8,6 @@ import { fetchProductById } from "../ProductAPI";
 import { useParams } from "react-router-dom";
 import { selectLoggedInUser } from "../../auth/authSlice";
 import { addToCartAsync, selectItems } from "../../cart/cartSlice";
-import { discountedPrice } from "../../../app/constants";
 
 
 
@@ -139,7 +138,7 @@ export default function ProductDetails() {
                 ${product.price}
               </p>
               <p className="text-2xl tracking-tight text-gray-900">
-                ${discountedPrice(product)}
+                ${product.discountPrice}
               </p>
 
               {/* Reviews */}

@@ -7,7 +7,6 @@ import {fetchProductByIdAsync, selectProductById} from '../../product-list/Produ
 import { fetchProductById } from "../../product-list/ProductAPI";
 import { useParams } from "react-router-dom";
 import { addToCartAsync } from "../../cart/cartSlice";
-import { discountedPrice } from "../../../app/constants";
 
  const colors = [
     { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
@@ -150,7 +149,7 @@ export default function AdminProductDetails() {
               ${product.price}
             </p>
             <p className="text-xl tracking-tight text-gray-900">
-              ${discountedPrice(product)}
+              ${product.discountPrice}
             </p>
 
             {/* Reviews */}

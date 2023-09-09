@@ -13,7 +13,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, Navigate } from "react-router-dom";
 import { updateCart } from "./cartAPI";
-import { discountedPrice } from "../../app/constants";
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -21,7 +20,7 @@ export default function Cart() {
   const items = useSelector(selectItems);
   const cartLoaded = useSelector(selectCartLoaded);
   const totalAmount = items.reduce(
-    (amount, item) => discountedPrice(item.product) * item.quantity + amount,
+    (amount, item) => item.product.discountPrice * item.quantity + amount,
     0
   );
   const totalItems = items.reduce((total, item) => item.quantity + total, 0);
@@ -61,7 +60,7 @@ export default function Cart() {
                         <h3>
                           <a href={item.product.id}>{item.product.title}</a>
                         </h3>
-                        <p className="ml-4">$ {discountedPrice(item.product)}</p>
+                        <p className="ml-4">$ {item.product.discountPrice}</p>
                       </div>
                       <p className="mt-1 text-sm text-gray-500">{item.product.brand}</p>
                     </div>

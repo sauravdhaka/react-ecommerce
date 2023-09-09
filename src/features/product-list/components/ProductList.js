@@ -22,7 +22,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
-import { ITEMS_PER_PAGE, discountedPrice } from "../../../app/constants";
+import { ITEMS_PER_PAGE } from "../../../app/constants";
 import Pagination from "../../common/Pagination";
 
 const sortOptions = [
@@ -68,7 +68,6 @@ export default function ProductList() {
   const handleFilter = (e, section, option) => {
     console.log(e.target.checked);
     const newFilter = { ...filter };
-    // todo : on serer it will suppoert multi value
     if (e.target.checked) {
       if (newFilter[section.id]) {
         newFilter[section.id].push(option.value);
@@ -439,7 +438,7 @@ function ProductGrid({ products }) {
                   <div>
                     <p className="text-sm font-medium text-gray-900">
                       $
-                      {discountedPrice(product)}
+                      {product.discountPrice}
                     </p>
                     <p className="text-sm line-through font-medium text-gray-400">
                       ${product.price}

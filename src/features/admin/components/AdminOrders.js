@@ -13,7 +13,6 @@ import {
   ArrowDownIcon,
   ArrowUpIcon,
 } from "@heroicons/react/24/outline";
-import { discountedPrice } from "../../../app/constants";
 import Pagination from "../../common/Pagination";
 
 export default function AdminOrders() {
@@ -166,7 +165,7 @@ export default function AdminOrders() {
                           </div>
                           <span>
                             {item.product.title} - #{item.quantity} - $
-                            {discountedPrice(item.product)}
+                            {item.product.discountPrice}
                           </span>
                         </div>
                       ))}
